@@ -1,7 +1,8 @@
 local player = {}
 
 function player:init()
-	self.resources = 1000
+	self.resources = 300
+	self.team = "green"
 end
 
 return player

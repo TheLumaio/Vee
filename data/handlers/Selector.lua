@@ -23,7 +23,7 @@ function selector:update(dt)
 		self.ey = my
 		self.w = (self.ex-self.sx) / MainCam.scale
 		self.h = (self.ey-self.sy) / MainCam.scale
-		for i,v in pairs(UnitHandler.units) do
+		for i,v in pairs(EntityHandler.entities) do
 			local dx, dy = MainCam:worldCoords(self.sx, self.sy)
 			if v.x > dx and v.x < dx+self.w and v.y > dy and v.y < dy+self.h then v.selected = true
 			elseif v.x < dx and v.x > dx+self.w and v.y < dy and v.y > dy+self.h then v.selected = true
@@ -74,16 +74,16 @@ function selector:mousepressed(x, y, b)
 
 	if b == "l" and self.placing then
 		-- Make sure there isn't a building in the way
-		local s_c, u_c = self:Colliding(x, y)
-		if s_c == true or u_c == true then
-			return
+		local c = self:Colliding(x, y)
+		if c == false then
+			local dx, dy = MainCam:worldCoords(x, y)
+			self.placing.x = dx - self.placing.image:getWidth()/2
+			self.placing.y = dy - self.placing.image:getHeight()/2
+			self.placing:place()
+			EntityHandler:addEntity(self.placing)
+			Player.resources = Player.resources - self.placing.bcost
+			self.placing = nil
 		end
-
-		local dx, dy = MainCam:worldCoords(x, y)
-		self.placing.x = dx - self.placing.image:getWidth()/2
-		self.placing.y = dy - self.placing.image:getHeight()/2
-		UnitHandler:addUnit(self.placing)
-		self.placing = nil
 	end
 end
 
@@ -94,19 +94,19 @@ function selector:mousereleased(x, y ,b)
 end
 
 function selector:Colliding(x, y)
-	local s_c, u_c = false, false
+	local collide = false
 
 	local dx, dy = MainCam:worldCoords(x, y)
 	dx = dx - self.placing.image:getWidth()/2
 	dy = dy - self.placing.image:getHeight()/2
 
-	for i,v in pairs(UnitHandler.units) do
+	for i,v in pairs(EntityHandler.entities) do
 		if v.actor then
 			local w2 = self.placing.image:getWidth()
 			local h2 = self.placing.image:getHeight()
 
 			if CheckCollision(dx, dy, w2, h2, v.x-v.w/2, (v.y-v.h/2), v.w, v.h/2) then
-				u_c = true
+				collide = true
 			end
 		else
 			local w = v.w or v.image:getWidth()
@@ -117,22 +117,17 @@ function selector:Colliding(x, y)
 			local b1 = {x = dx, y = dy, w=w2, h=h2}
 			local b2 = {x = v.x, y = v.y, w=w, h=h}
 			if CheckCollision(dx, dy, w2, h2, v.x, v.y, w, h) then
-
-				print("c " .. i)
-				s_c = true
+				collide = true
 			end
 		end
 
 	end
 
-
-	for i,v in pairs(UnitHandler.units) do
-
+	if Player.resources - self.placing.bcost < 0 then
+		collide = true
 	end
 
-
-
-	return s_c, u_c
+	return collide
 end
 
 function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)

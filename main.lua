@@ -3,7 +3,9 @@ Gamestate = require ("lib.hump.gamestate")
 Camera = require ("lib.hump.camera")
 Class = require ("lib.hump.class")
 
-Play = require ("states.play")
+Options = require ("states.Options")
+Menu = require ("states.Menu")
+Play = require ("states.Play")
 
 require ("data")
 
@@ -15,6 +17,8 @@ function love.load()
 	g = love.graphics
 
 	MainFont = g.newFont("res/fonts/Anonymous.ttf", 16)
+	Title = g.newFont("res/fonts/Anonymous.ttf", 100)
+	Option = g.newFont("res/fonts/Anonymous.ttf", 50)
 
 	World = phys.newWorld(0, 0, true)
 
@@ -23,7 +27,7 @@ function love.load()
 
 	phys.setMeter(16)
 
-	Gamestate.switch(Play)
+	Gamestate.switch(Menu)
 	Gamestate.registerEvents()
 end
 
@@ -34,10 +38,9 @@ end
 function love.draw()
 end
 
-function round(v, p)
-	local mult = math.pow(10, p or 0) -- round to 0 places when p not supplied
-	return math.floor(v * mult + 0.5) / mult;
-end
+--[[
+-- Utility functions for ease of use
+--]]
 
 function deepCopy(object)
     local lookup_table = {}

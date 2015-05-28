@@ -1,21 +1,23 @@
 local play = {}
 
 function play:init()
-	UnitHandler:init()
+	EntityHandler:init()
 	Selector:init()
 	Player:init()
 	Hud:init()
 
-	UnitHandler:addUnit(Grunt:new(100, 100))
-	UnitHandler:addUnit(Grunt:new(100, 150))
-	UnitHandler:addUnit(Grunt:new(150, 100))
-	UnitHandler:addUnit(Grunt:new(150, 150))
+	EntityHandler:addEntity(Grunt:new(100, 100))
+	EntityHandler:addEntity(Grunt:new(100, 150))
+	EntityHandler:addEntity(Grunt:new(150, 100))
+	EntityHandler:addEntity(Grunt:new(150, 150))
+
+	EntityHandler:addEntity(Turret:new(200, 200, Player.team))
 
 	BG = g.newImage("res/images/bg.png")
 end
 
 function play:update(dt)
-	UnitHandler:update(dt)
+	EntityHandler:update(dt)
 	Selector:update(dt)
 	Hud:update(dt)
 
@@ -33,11 +35,12 @@ function play:update(dt)
 end
 
 function play:draw()
+	g.setFont(MainFont)
 	MainCam:attach()
 
 	g.draw(BG)
 
-	UnitHandler:draw()
+	EntityHandler:draw()
 	Selector:draw()
 
 	MainCam:detach()
@@ -46,8 +49,17 @@ function play:draw()
 
 end
 
+function play:keypressed(key)
+	if key == "b" then
+		Selector.debug = not Selector.debug
+	end
+	if key == "escape" then
+		Gamestate.switch(Menu)
+	end
+end
+
 function play:mousepressed(x, y, b)
-	UnitHandler:mousepressed(x, y, b)
+	EntityHandler:mousepressed(x, y, b)
 	Selector:mousepressed(x, y, b)
 	Hud:mousepressed(x, y, b)
 

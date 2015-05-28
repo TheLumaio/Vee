@@ -4,7 +4,7 @@ local path = ...
 
 -- Handlers
 --StructureHandler = require (... .. ".handlers.StructureHandler")
-UnitHandler = require (... .. ".handlers.UnitHandler")
+EntityHandler = require (... .. ".handlers.EntityHandler")
 Selector = require (... .. ".handlers.Selector")
 Player = require (... .. ".handlers.Player")
 Hud = require (... .. ".handlers.Hud")
@@ -14,4 +14,5 @@ Grunt = require (... .. ".units.Grunt")
 
 -- Structures
 Factory = require (... .. ".structures.Factory")
+Turret = require (... .. ".structures.Turret")
 Drill = require (... .. ".structures.Drill")
